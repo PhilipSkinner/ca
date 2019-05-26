@@ -1,0 +1,22 @@
+{
+    "name": "ca",
+    "version": "0.0.1",
+    "dependencies": {
+        "asn1js": "^2.0.22",
+        "body-parser": "^1.19.0",
+        "express": "^4.16.4",
+        "glob": "^7.1.4",
+        "pem-file": "^1.0.1",
+        "pkijs": "^2.1.77",
+        "swagger-ui-express": "^4.0.2",
+        "uuid": "^3.3.2"
+    },
+    "config": {
+        "store": "./store",
+        "salt": "doot doot doot"
+    },
+    "author": {
+        "name": "Philip Skinner",
+        "email": "me@philip-skinner.co.uk"
+    }
+}

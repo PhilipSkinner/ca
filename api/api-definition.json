@@ -1,0 +1,321 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "CA API",
+    "description" : "Simple CA, Intermediate & Certificate management API.\n",
+    "termsOfService" : "/terms",
+    "contact" : {
+      "url" : "https://www.philip-skinner.co.uk",
+      "email" : "me@philip-skinner.co.uk"
+    },
+    "license" : {
+      "name" : "MIT",
+      "url" : "https://opensource.org/licenses/MIT"
+    },
+    "version" : "0.0.1-oas3"
+  },
+  "externalDocs" : {
+    "description" : "Documentation",
+    "url" : "https://github.com/PhilipSkinner/ca"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:3000"
+  } ],
+  "paths" : {
+    "/ca" : {
+      "get" : {
+        "summary" : "Get a list of all CAs currently held within the store.",
+        "responses" : {
+          "200" : {
+            "description" : "A list of all CAs",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CAList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Construct a new certificate authority. Each CA is issued a unique ID which, on creation, is returned as part of the location header.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CAReq"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "CA created",
+            "headers" : {
+              "location" : {
+                "description" : "Location of newly created CA",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Number of days valid for not provided",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1001"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal openSSL error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1100"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ca/{id}" : {
+      "get" : {
+        "summary" : "Get a CA by its unique id",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "The id of the CA to fetch",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The details of the CA specified",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CAResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ID required",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1003"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "CA not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1002"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a CA",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "The id of the CA to delete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Operation completed successfully"
+          },
+          "400" : {
+            "description" : "ID required",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1003"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "CA not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1002"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "EntityProps" : {
+        "type" : "object",
+        "properties" : {
+          "country" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "town" : {
+            "type" : "string"
+          },
+          "organisation" : {
+            "type" : "string"
+          },
+          "organisationalUnit" : {
+            "type" : "string"
+          },
+          "commonName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CAResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "uri" : {
+            "type" : "string"
+          },
+          "issued" : {
+            "type" : "string"
+          },
+          "expires" : {
+            "type" : "string"
+          },
+          "serial" : {
+            "type" : "integer"
+          },
+          "subject" : {
+            "$ref" : "#/components/schemas/EntityProps"
+          },
+          "issuer" : {
+            "$ref" : "#/components/schemas/EntityProps"
+          }
+        }
+      },
+      "CAList" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/CAResponse"
+        }
+      },
+      "CAReq" : {
+        "type" : "object",
+        "properties" : {
+          "country" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "locality" : {
+            "type" : "string"
+          },
+          "organisation" : {
+            "type" : "string"
+          },
+          "organisationalUnit" : {
+            "type" : "string"
+          },
+          "commonName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "validFor" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "Error_1001" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "example" : 1001
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "validFor is required"
+          }
+        }
+      },
+      "Error_1002" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "example" : 1002
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "ca not found"
+          }
+        }
+      },
+      "Error_1003" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "example" : 1003
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "id is required to fetch ca"
+          }
+        }
+      },
+      "Error_1100" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "example" : 1100
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "openssl error"
+          }
+        }
+      }
+    }
+  }
+}

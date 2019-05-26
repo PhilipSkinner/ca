@@ -14,8 +14,10 @@ list.prototype.response = function(req, res) {
         return res.json(require('../../models/errors/ca/createNoDays'));
     }
 
-    this.openssl.generateCA(req.body).then(() => {
-        res.status(200);
+    this.openssl.generateCA(req.body).then((caId) => {
+        //set our location header for our newly created CA
+        res.header('Location', '/ca/' + caId);
+        res.status(201);
         res.end();
     }).catch((err) => {
         console.log(err);

@@ -1,8 +1,9 @@
-const openssl = function(config, childProcess, path, fs) {
+const openssl = function(config, childProcess, path, fs, uuid) {
     this.config = config;
     this.childProcess = childProcess;
     this.path = path;
     this.fs = fs;
+    this.uuid = uuid;
 };
 
 openssl.prototype.generateSubject = function(options) {
@@ -50,6 +51,8 @@ openssl.prototype.generateCA = function(options) {
             this.fs.mkdirSync(caDir);
         }        
 
+        const uniqueId = this.uuid();
+
         return new Promise((resolve, reject) => {
             const proc = this.childProcess.spawn('openssl', [
                 'req',
@@ -60,10 +63,11 @@ openssl.prototype.generateCA = function(options) {
                 '-extensions',
                 'v3_ca',
                 '-keyout',
-                options.name + '-key.pem',
+                uniqueId + '-key.pem',
                 '-out',
-                options.name + '-cert.pem',
+                uniqueId + '-cert.pem',
                 '-passout',
+                //todo: this is very temporary!
                 'pass:temporary',
                 '-subj',
                 this.generateSubject(options)
@@ -76,14 +80,15 @@ openssl.prototype.generateCA = function(options) {
                     return reject(new Error('Unable to generate CA'));
                 }
 
-                return resolve();
+                //return our unique id
+                return resolve(uniqueId);
             });
         });
         
     });    
 };
 
-module.exports = function(config, childProcess, path, fs) {
+module.exports = function(config, childProcess, path, fs, uuid) {
     if (!config) {
         config = require('./config')();
     }
@@ -100,5 +105,9 @@ module.exports = function(config, childProcess, path, fs) {
         fs = require('fs');
     }
 
-    return new openssl(config, childProcess, path, fs);
+    if (!uuid) {
+        uuid = require('uuid/v4');
+    }
+
+    return new openssl(config, childProcess, path, fs, uuid);
 }
