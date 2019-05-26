@@ -11,19 +11,21 @@ createController.prototype.setup = function(endpoint) {
 createController.prototype.response = function(req, res) {
     if (typeof(req.body.validFor) === 'undefined' || req.body.validFor === null) {
         res.status(400);
-        return res.json(require('../../models/errors/ca/createNoDays'));
+        return res.json(require('../../models/errors/int/createNoDays'));
     }
 
-    this.openssl.generateCA(req.body).then((caId) => {
+    req.body.ca = req.params.id;
+
+    this.openssl.generateIntermediate(req.body).then((intId) => {
         //set our location header for our newly created CA
-        res.header('Location', '/ca/' + caId);
+        res.header('Location', '/ca/' + req.params.id + '/intermediate/' + intId);
         res.status(201);
         res.end();
     }).catch((err) => {
         console.log(err);
 
         res.status(500);
-        return res.json(require('../../models/errors/ca/createOpensslError'));
+        return res.json(require('../../models/errors/int/createOpensslError'));
     });
 };
 

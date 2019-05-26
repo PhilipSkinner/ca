@@ -15,7 +15,7 @@ const certs = function(fs, pkijs, asnjs, path) {
 	}
 };
 
-certs.prototype.getDetails = function(certPath) {
+certs.prototype.getDetails = function(certPath, caId) {
 	return new Promise((resolve, reject) => {
 		this.fs.readFile(certPath, (err, raw) => {
 			if (err) {
@@ -25,18 +25,18 @@ certs.prototype.getDetails = function(certPath) {
 		    const asn1 = this.asnjs.fromBER(new Uint8Array(Buffer.from(raw.toString('utf8').replace(/(-----(BEGIN|END) CERTIFICATE-----|[\n\r])/g, ''), 'base64')).buffer);
 		    const cert = new this.pkijs.Certificate({ schema: asn1.result });
 
-		    return resolve(this._detailsFactory(cert, certPath));
+		    return resolve(this._detailsFactory(cert, certPath, caId));
 		});
 	});
 };
 
-certs.prototype._detailsFactory = function(cert, certPath) {
+certs.prototype._detailsFactory = function(cert, certPath, caId) {
 	const _raw = JSON.parse(JSON.stringify(cert));
-	const id = certPath.split('/').slice(-1)[0].split('\\').slice(-1)[0].replace('-cert.pem', '');
+	const id = certPath.split('/').slice(-1)[0].split('\\').slice(-1)[0].replace('-cert.pem', '');	
 
 	const ret = {
 		id 		: id,
-		uri 	: '/ca/' + id,
+		uri 	: caId ? '/ca/' + caId + '/intermediate/' + id : '/ca/' + id,
 		issued 	: _raw.notBefore.value,
 		expires : _raw.notAfter.value,
 		serial 	: parseInt(_raw.serialNumber.valueBlock.valueHex, 16),

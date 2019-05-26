@@ -10,12 +10,12 @@ listController.prototype.setup = function(endpoint) {
     this.app.get(endpoint, this.response.bind(this));
 };
 
-listController.prototype.response = function(req, res) {
+listController.prototype.response = function(req, res) {        
 	this.config.read().then((config) => {
-		return this.fsHelpers.listFiles(this.path.join(config.store, 'ca', '**/*-cert.pem'));
+		return this.fsHelpers.listFiles(this.path.join(config.store, 'int', req.params.id, '**/*-cert.pem'));
 	}).then((results) => {
 		return Promise.all(results.map((r) => {
-			return this.certs.getDetails(r);
+			return this.certs.getDetails(r, req.params.id);
 		}));
 	}).then((details) => {
 		res.send(details);

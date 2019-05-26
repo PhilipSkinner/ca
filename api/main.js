@@ -18,6 +18,11 @@ const controllers = {
         create  : require('./controllers/ca/create')(app),
         details : require('./controllers/ca/details')(app),
         delete  : require('./controllers/ca/delete')(app),
+    },
+    int : {
+        create  : require('./controllers/intermediate/create')(app),
+        list    : require('./controllers/intermediate/list')(app),
+        details : require('./controllers/intermediate/details')(app)
     }
 };
 
@@ -25,6 +30,9 @@ controllers.ca.list.setup('/ca');
 controllers.ca.create.setup('/ca');
 controllers.ca.details.setup('/ca/:id');
 controllers.ca.delete.setup('/ca/:id');
+controllers.int.create.setup('/ca/:id/intermediate');
+controllers.int.list.setup('/ca/:id/intermediate');
+controllers.int.details.setup('/ca/:id/intermediate/:intermediate');
 
 app.listen(port, () => {
     console.log(`CA listening on port ${port}`);

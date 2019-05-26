@@ -173,6 +173,67 @@
           }
         }
       }
+    },
+    "/ca/{id}/intermediate" : {
+      "post" : {
+        "summary" : "Construct a new certificate authority. Each CA is issued a unique ID which, on creation, is returned as part of the location header.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CAReq"
+              }
+            }
+          },
+          "required" : true
+        },
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "The id of the CA to fetch",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "CA created",
+            "headers" : {
+              "location" : {
+                "description" : "Location of newly created CA",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Number of days valid for not provided",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1001"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal openSSL error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1100"
+                }
+              }
+            }
+          }
+        }
+      }    
     }
   },
   "components" : {

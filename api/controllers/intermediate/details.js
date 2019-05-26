@@ -16,28 +16,18 @@ detailsController.prototype.response = function(req, res) {
         return res.json(require('../../models/errors/ca/idRequired'));
     }
 
-    let config = null;
+    if (!req.params.intermediate) {
+        res.status(400);
+        return res.json(require('../../models/errors/int/idRequired'));
+    }
     
-	this.config.read().then((_config) => {
-        config = _config;
-        return this.certs.getDetails(this.path.join(config.store, 'ca', req.params.id + '-cert.pem'));			
+	this.config.read().then((config) => {
+        return this.certs.getDetails(this.path.join(config.store, 'int', req.params.id, req.params.intermediate + '-cert.pem'), req.params.id);			
 	}).then((details) => {
-        //find our intermediates        
-        this.fsHelpers.listFiles(this.path.join(config.store, 'int', req.params.id, '**/*-cert.pem')).then((intermediates) => {            
-            details.intermediates = intermediates.map((f) => {
-                const id = f.split('/').slice(-1)[0].split('\\').slice(-1)[0].replace('-cert.pem', '');
-                return {
-                    id : id,
-                    url : '/ca/' + req.params.id + '/intermediate/' + id
-                };                
-            });
-            res.send(details);
-        });		
+		res.send(details);
 	}).catch((err) => {
-        console.log(err);
-
         res.status(404);
-		return res.json(require('../../models/errors/ca/notFound'));
+		return res.json(require('../../models/errors/int/notFound'));
 	});
 };
 
