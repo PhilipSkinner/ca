@@ -25,6 +25,17 @@
     "/ca" : {
       "get" : {
         "summary" : "Get a list of all CAs currently held within the store.",
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          }
+        ],
         "responses" : {
           "200" : {
             "description" : "A list of all CAs",
@@ -40,6 +51,17 @@
       },
       "post" : {
         "summary" : "Construct a new certificate authority. Each CA is issued a unique ID which, on creation, is returned as part of the location header.",
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          }
+        ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -87,20 +109,31 @@
         }
       }
     },
-    "/ca/{id}" : {
+    "/ca/{caId}" : {
       "get" : {
         "summary" : "Get a CA by its unique id",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "The id of the CA to fetch",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          }, 
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to fetch",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          } 
+        ],
         "responses" : {
           "200" : {
             "description" : "The details of the CA specified",
@@ -136,17 +169,28 @@
       },
       "delete" : {
         "summary" : "Delete a CA",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "The id of the CA to delete",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "parameters" : [ 
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to delete",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          } 
+        ],
         "responses" : {
           "204" : {
             "description" : "Operation completed successfully"
@@ -174,7 +218,44 @@
         }
       }
     },
-    "/ca/{id}/intermediate" : {
+    "/ca/{caId}/intermediate" : {
+      "get" : {
+        "summary" : "Fetches a list of all intermediate authorities held within the system for the given CA.",
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to fetch the intermediates for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "List of CA intermediates",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IntermediateList"
+                }
+              }
+            }
+          }
+        }
+      },
       "post" : {
         "summary" : "Construct a new certificate authority. Each CA is issued a unique ID which, on creation, is returned as part of the location header.",
         "requestBody" : {
@@ -187,17 +268,28 @@
           },
           "required" : true
         },
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "The id of the CA to fetch",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "parameters" : [ 
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to create the intermediate for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          } 
+        ],
         "responses" : {
           "201" : {
             "description" : "CA created",
@@ -234,10 +326,95 @@
           }
         }
       }    
+    },
+    "/ca/{caId}/intermediate/{intermediateId}" : {
+      "get" : {
+        "summary" : "Fetch the details for the intermediate certificate.",
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to fetch the intermediate from",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          },
+          {
+            "name" : "intermediateId",
+            "in" : "path",
+            "description" : "The id of the intermediate to fetch",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The details of the intermediate specified",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CAResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
+    "parameters" : {
+      "encryptionKey" : {
+        "name" : "encryption-key",
+        "in" : "header",
+        "description" : "Optional public key for encryption of the response",
+        "required" : false,
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "encryptionAlgorithm" : {
+        "name" : "algorithm",
+        "in" : "header",
+        "description" : "Required when the encyption key is specified. Support algorithms are X, Y, Z",
+        "required" : false,
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "passkey" : {
+        "name" : "passkey",
+        "in" : "header",
+        "description" : "The passkey to use when generating or accessing the certificates in question.",
+        "required" : false,
+        "schema" : {
+          "type" : "string"
+        }
+      }
+    },
     "schemas" : {
+      "IntermediateList" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/CAResponse"
+        }
+      },
       "EntityProps" : {
         "type" : "object",
         "properties" : {

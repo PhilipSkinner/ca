@@ -1,15 +1,23 @@
-const openssl = function(config, childProcess, path, fs, uuid) {
+const openssl = function(config, childProcess, path, fs, uuid, isemail) {
     this.config = config;
     this.childProcess = childProcess;
     this.path = path;
     this.fs = fs;
     this.uuid = uuid;
+    this.isemail = isemail;
 };
 
 openssl.prototype.generateSubject = function(options) {
     let ret = "";
 
+    //todo: validate email address
+    //todo: validate country is 2 digits
+
     if (options.country) {
+        if (!/^[a-zA-Z]{2}$/.test(options.country)) {
+            throw new Error("Country needs to be two A-Z characters");
+        }
+
         ret += "/C=" + options.country;
     }
 
@@ -34,6 +42,10 @@ openssl.prototype.generateSubject = function(options) {
     }
 
     if (options.email) {
+        if (!this.isemail.validate(options.email)) {
+            throw new Error("Email must be valid");
+        }
+
         ret += "/emailAddress=" + options.email;
     }
 
@@ -195,7 +207,7 @@ openssl.prototype.generateCA = function(options) {
                 this.generateSubject(options)
             ], {
                 cwd : caDir
-            });            
+            });
 
             proc.on('close', (code) => {
                 if (code !== 0) {
@@ -210,7 +222,7 @@ openssl.prototype.generateCA = function(options) {
     });    
 };
 
-module.exports = function(config, childProcess, path, fs, uuid) {
+module.exports = function(config, childProcess, path, fs, uuid, isemail) {
     if (!config) {
         config = require('./config')();
     }
@@ -231,5 +243,9 @@ module.exports = function(config, childProcess, path, fs, uuid) {
         uuid = require('uuid/v4');
     }
 
-    return new openssl(config, childProcess, path, fs, uuid);
-}
+    if (!isemail) {
+        isemail = require('isemail');
+    }
+
+    return new openssl(config, childProcess, path, fs, uuid, isemail);
+};
