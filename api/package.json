@@ -1,9 +1,10 @@
 {
-    "name": "ca",
+    "name": "ca-api",
     "version": "0.0.1",
     "dependencies": {
         "asn1js": "^2.0.22",
         "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
         "express": "^4.16.4",
         "glob": "^7.1.4",
         "isemail": "^3.2.0",

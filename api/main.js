@@ -3,11 +3,13 @@ const
     swagger         = require('swagger-ui-express'),
     apiDefinition   = require('./api-definition.json'),
     config          = require('./lib/config')(),
+    cors            = require('cors'),
     bodyParser      = require('body-parser');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
+app.use(cors());
 app.use('/docs', swagger.serve, swagger.setup(apiDefinition));
 
 const port = process.env.PORT || 3000;
