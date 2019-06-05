@@ -139,6 +139,41 @@ openssl.prototype.signCSR = function(options, csrfile, certfile, cafile, cakey) 
     });
 };
 
+openssl.prototype.generateCertificate = function(options) {
+    const uniqueId = this.uuid();
+    let certDir = null;
+    let caPrefix = null;    
+
+    return this.config.read().then((config) => {
+        certDir = this.path.join(process.cwd(), config.store, 'cert');
+        intPrefix = this.path.join(process.cwd(), config.store, 'int', options.ca, options.intermediate);
+
+        try {
+            this.fs.statSync(certDir);
+        } catch(e) {
+            this.fs.mkdirSync(certDir);
+        }
+
+        certDir = this.path.join(certDir, options.intermediate);
+
+        try {
+            this.fs.statSync(certDir);
+        } catch(e) {
+            this.fs.mkdirSync(certDir);
+        }
+
+        //generate the key
+        return this.generateKey(this.path.join(certDir, uniqueId + '-key.pem'));        
+    }).then((keyfile) => {
+        //generate the csr
+        return this.generateCSR(options, keyfile, this.path.join(certDir, uniqueId + '-csr.pem'));
+    }).then((csrfile) => {
+        return this.signCSR(options, csrfile, this.path.join(certDir, uniqueId + '-cert.pem'), intPrefix + '-cert.pem', intPrefix + '-key.pem');
+    }).then(() => {
+        return Promise.resolve(uniqueId);
+    });
+};
+
 openssl.prototype.generateIntermediate = function(options) {
     const uniqueId = this.uuid();
     let intermediateDir = null;

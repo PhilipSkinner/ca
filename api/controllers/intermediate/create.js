@@ -17,7 +17,7 @@ createController.prototype.response = function(req, res) {
     req.body.ca = req.params.id;
 
     this.openssl.generateIntermediate(req.body).then((intId) => {
-        //set our location header for our newly created CA
+        //set our location header for our newly created intermediate
         res.header('Location', '/ca/' + req.params.id + '/intermediate/' + intId);
         res.status(201);
         res.end();

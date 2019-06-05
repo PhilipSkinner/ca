@@ -12,7 +12,7 @@
       "name" : "MIT",
       "url" : "https://opensource.org/licenses/MIT"
     },
-    "version" : "0.0.1-oas3"
+    "version" : "0.0.1"
   },
   "externalDocs" : {
     "description" : "Documentation",
@@ -257,7 +257,7 @@
         }
       },
       "post" : {
-        "summary" : "Construct a new certificate authority. Each CA is issued a unique ID which, on creation, is returned as part of the location header.",
+        "summary" : "Construct a new intermediate certificate. Each intermediate is issued a unique ID which, on creation, is returned as part of the location header.",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -370,6 +370,137 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CAResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ca/{caId}/intermediate/{intermediateId}/cert" : {
+      "get" : {
+        "summary" : "Fetch all certificates that have been issued for an intermediate",
+        "responses" : {
+          "200" : {
+            "description" : "The details of the CA specified",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CAResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to create the intermediate for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          },
+          {
+            "name" : "intermediateId",
+            "in" : "path",
+            "description" : "The id of the intermediate to create the cert for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        ]
+      },
+      "post" : {
+        "summary" : "Issue a new certificate signed by the intermediate certificate. Each certificate is issued a unique ID which, on creation, is returned as part of the location header.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CAReq"
+              }
+            }
+          },
+          "required" : true
+        },
+        "parameters" : [
+          {
+            "$ref" : "#/components/parameters/encryptionKey"
+          },
+          {
+            "$ref" : "#/components/parameters/encryptionAlgorithm"
+          },
+          {
+            "$ref" : "#/components/parameters/passkey"
+          },
+          {
+            "name" : "caId",
+            "in" : "path",
+            "description" : "The id of the CA to create the intermediate for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          },
+          {
+            "name" : "intermediateId",
+            "in" : "path",
+            "description" : "The id of the intermediate to create the cert for",
+            "required" : true,
+            "style" : "simple",
+            "explode" : false,
+            "schema" : {
+              "type" : "string"
+            }
+          }  
+        ],
+        "responses" : {
+          "201" : {
+            "description" : "Cert created",
+            "headers" : {
+              "location" : {
+                "description" : "Location of newly created cert",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Number of days valid for not provided",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1001"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal openSSL error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error_1100"
                 }
               }
             }
