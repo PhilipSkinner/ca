@@ -4,20 +4,23 @@ import './resources/App.css';
 import { 
   Menu,
   Authorities,
-  Settings
+  Settings,
+  CAForm
 } from './components';
 
 class App extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        selected : "authorities"
+        selected : "authorities",
+        caId     : null
       };
   }
 
   displayAuthorities() {
     this.setState({
-      selected : 'authorities'
+      selected  : 'authorities',
+      caId      : null
     });
   }
 
@@ -27,9 +30,23 @@ class App extends Component {
     })
   }
 
+  displayAddCA() {
+    this.setState({
+      selected : 'CAForm'
+    });
+  }
+
+  displayCA(caId) {
+    this.setState({
+      selected  : 'caDetails',
+      caId      : caId
+    });
+  }
+
   render() {
     const {
-      selected
+      selected,
+      caId
     } = this.state;
 
     return (
@@ -39,7 +56,14 @@ class App extends Component {
           displaySettings={this.displaySettings.bind(this)}
         />
 
-        { selected === 'authorities' && <Authorities /> }
+        { selected === 'authorities' && <Authorities 
+          addCA={this.displayAddCA.bind(this)}
+          openCA={this.displayCA.bind(this)}
+        /> }
+        { selected === 'CAForm' && <CAForm
+          cancel={this.displayAuthorities.bind(this)}
+          completed={this.displayCA.bind(this)}
+        />}
         { selected === 'settings' && <Settings /> }
       </div>
     );

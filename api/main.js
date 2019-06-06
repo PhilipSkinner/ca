@@ -10,6 +10,11 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/', (req, res, next) => {
+    res.header('Access-Control-Expose-Headers', 'Location');
+    res.header('Access-Control-Allow-Headers', 'Location');
+    next();
+});
 app.use('/docs', swagger.serve, swagger.setup(apiDefinition));
 
 const port = process.env.PORT || 3000;
