@@ -29,9 +29,8 @@ class CAForm extends Component {
 		    },
 		    body: JSON.stringify(this.state.ca)
         })
-        .then((res) => {
-        	console.log("location is", res.headers.get('Location'));
-        	this.props.completed(1);
+        .then((res) => {        	
+        	this.props.completed();
         })
         .catch((err) => {
         	this.setState({
