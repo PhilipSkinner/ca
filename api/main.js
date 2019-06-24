@@ -34,7 +34,8 @@ const controllers = {
     },
     cert : {
         create  : require('./controllers/certs/create')(app),
-        list    : require('./controllers/certs/list')(app)
+        list    : require('./controllers/certs/list')(app),
+        details : require('./controllers/certs/details')(app)
     }
 };
 
@@ -48,6 +49,7 @@ controllers.int.details.setup('/ca/:id/intermediate/:intermediate');
 controllers.int.delete.setup('/ca/:id/intermediate/:intermediate');
 controllers.cert.create.setup('/ca/:id/intermediate/:intermediate/cert');
 controllers.cert.list.setup('/ca/:id/intermediate/:intermediate/cert');
+controllers.cert.details.setup('/ca/:id/intermediate/:intermediate/cert/:cert');
 
 app.listen(port, () => {
     console.log(`CA listening on port ${port}`);
