@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
 
 class Modal extends Component {
-	constructor(props) {
-	    super(props);
-	}
-
 	onConfirm() {
 		this && this.props && this.props.onConfirm && this.props.onConfirm();
 	}

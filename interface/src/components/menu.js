@@ -46,9 +46,9 @@ class Menu extends Component {
 
 		return (
 			<nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-			  <a className="navbar-brand">
-			  	<img src={logo} className="logo" />
-			  </a>
+			  <div className="navbar-brand">
+			  	<img src={logo} className="logo" alt="Simple CA Interface" />
+			  </div>
 			  <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			    <span className="navbar-toggler-icon"></span>
 			  </button>
@@ -56,22 +56,22 @@ class Menu extends Component {
 			  <div className="collapse navbar-collapse" id="navbarSupportedContent">
 			    <ul className="navbar-nav mr-auto">
 			      <li className={authoritiesClassName}>
-			        <a className="nav-link" onClick={this.selectAuthorities.bind(this)}>
+			        <button className="nav-link" onClick={this.selectAuthorities.bind(this)}>
 			        	Authorities 
 			        	{ 
 		        			selected === 'authorities' 
 		        			&& <span className="sr-only">(current)</span>
 			        	}
-			        </a>
+			        </button>
 			      </li>
 			      <li className={settingsClassName}>
-			        <a className="nav-link" onClick={this.selectSettings.bind(this)}>
+			        <button className="nav-link" onClick={this.selectSettings.bind(this)}>
 			        	Settings
 			        	{
 			        		selected === 'settings'
 			        		&& <span className="sr-only">(current)</span>
 			        	}
-		        	</a>
+		        	</button>
 			      </li>
   			    </ul>			    
 			  </div>

@@ -64,3 +64,8 @@ body {
   display: block;
   background: rgba(0,0,0,0.6);
 }
+
+button.nav-link {
+  background: none;
+  border: none;
+}
