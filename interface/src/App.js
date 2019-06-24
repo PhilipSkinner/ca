@@ -45,9 +45,14 @@ class App extends Component {
   }
 
   displayCA(caId) {
+    if (caId) {
+      this.setState({
+        caId            : caId
+      });      
+    }
+
     this.setState({
       selected        : 'caDetails',
-      caId            : caId,
       intermediateId  : null
     });
   }
@@ -59,9 +64,14 @@ class App extends Component {
   }
 
   openIntermediate(intermediateId) {
+    if (intermediateId) {
+      this.setState({
+        intermediateId  : intermediateId
+      });  
+    }
+
     this.setState({
       selected        : 'intermediateDetails',
-      intermediateId  : intermediateId,
       certificateId   : null
     });
   }
@@ -100,7 +110,7 @@ class App extends Component {
         /> }
         { selected === 'CAForm' && <CAForm
           cancel={this.displayAuthorities.bind(this)}
-          completed={this.displayCA.bind(this)}
+          completed={this.displayAuthorities.bind(this)}
         />}
         {
           selected === 'caDetails' && <CADetails

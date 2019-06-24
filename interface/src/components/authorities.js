@@ -53,6 +53,28 @@ class Authorities extends Component {
 			loading
 		} = this.state;
 
+		const children = authorities.map((a) => {
+			return (
+				<div className="card card-hover" onClick={this.caSelected.bind(this)(a.id)} key={a.id}>
+					<div className="card-body">
+						<h5 className="card-title">
+							{a.subject.commonName}
+						</h5>
+						<h6 className="guid-text card-subtitle mb-2 text-muted">{a.id}</h6>
+						<p className="card-text">
+							CA was issued at <strong>{new Date(a.issued).toLocaleDateString()}</strong> and expires at <strong>{new Date(a.expires).toLocaleDateString()}</strong>.
+						</p>
+					</div>
+				</div>
+			);
+		});
+
+		const wrapper = (
+			<div className="card-columns">
+				{children}
+			</div>
+		);
+
 		return (
 			<div className="container pt-4">
 				<div className="row">
@@ -82,33 +104,12 @@ class Authorities extends Component {
 
 						{
 							error === null && !loading && authorities.length === 0 &&
-							<div className="card">
-								<div className="card-body">
-									<em>
-										There are no authorities, why don't you create one?
-									</em>
-								</div>
+							<div className="alert alert-info">
+								There are no authorities, why don't you create one?
 							</div>
 						}
 
-						{
-							error === null && !loading && authorities.length > 0 &&
-							authorities.map((a) => {
-								return (
-									<div className="card card-hover col-md-3" onClick={this.caSelected.bind(this)(a.id)} key={a.id}>
-										<div className="card-body">
-											<h5 className="card-title">
-												{a.subject.commonName}
-											</h5>
-											<h6 className="guid-text card-subtitle mb-2 text-muted">{a.id}</h6>
-											<p className="card-text">
-												CA was issued at {a.issued} and expires at {a.expires}
-											</p>
-										</div>
-									</div>
-								);
-							})
-						}
+						{error === null && !loading && authorities.length > 0 && wrapper}
 					</div>
 				</div>
 			</div>

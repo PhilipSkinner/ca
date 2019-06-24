@@ -29,6 +29,7 @@ const controllers = {
     int : {
         create  : require('./controllers/intermediate/create')(app),
         list    : require('./controllers/intermediate/list')(app),
+        delete  : require('./controllers/intermediate/delete')(app),
         details : require('./controllers/intermediate/details')(app)
     },
     cert : {
@@ -44,6 +45,7 @@ controllers.ca.delete.setup('/ca/:id');
 controllers.int.create.setup('/ca/:id/intermediate');
 controllers.int.list.setup('/ca/:id/intermediate');
 controllers.int.details.setup('/ca/:id/intermediate/:intermediate');
+controllers.int.delete.setup('/ca/:id/intermediate/:intermediate');
 controllers.cert.create.setup('/ca/:id/intermediate/:intermediate/cert');
 controllers.cert.list.setup('/ca/:id/intermediate/:intermediate/cert');
 
